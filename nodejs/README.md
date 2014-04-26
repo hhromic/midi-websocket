@@ -23,7 +23,7 @@ node bridge_server.js [wsPort] [midiDevices] [sendersPrefix]
 
 * ```wsPort``` is the local port to use for incoming WebSocket connections.
 
-* ```midiDevices``` is a comma separated list of input/output MIDI port index pairs (separated by a semi-colon ```:```) defining local MIDI devices. If a device only has either an input or output, leave the counterpart index blank. For example ```0:0``` defines a MIDI device with ```input port 0``` and ```output port 0```, ```1:``` defines a MIDI device with only ```input port 1``` and ```:2``` defines a MIDI device with only ```output port 2```. Finally, you can use an empty string for this paramter for no local MIDI ports bridging.
+* ```midiDevices``` is a comma separated list of input/output MIDI port index pairs (separated by a semi-colon ```:```) defining local MIDI devices. If a device only has either an input or output, leave the counterpart index blank. For example ```0:0``` defines a MIDI device with ```input port 0``` and ```output port 0```, ```1:``` defines a MIDI device with only ```input port 1``` and ```:2``` defines a MIDI device with only ```output port 2```. Finally, you can use an empty string for this parameter for no local MIDI ports bridging.
 
 * ```sendersPrefix``` is an IP address prefix to match WebSocket clients when they try to send MIDI data to the server. The matching decides if this is allowed or not.
 
@@ -54,7 +54,7 @@ node bridge_client.js [wsServerUrl] [midiDevices]
 
 * ```wsServerUrl``` is the WebSocket server URL (ws://server:port) to connect the client to.
 
-* ```midiDevices``` is a comma separated list of input/output MIDI port index pairs (separated by a semi-colon ```:```) defining local MIDI devices. If a device only has either an input or output, leave the counterpart index blank. For example ```0:0``` defines a MIDI device with ```input port 0``` and ```output port 0```, ```1:``` defines a MIDI device with only ```input port 1``` and ```:2``` defines a MIDI device with only ```output port 2```. Finally, you can use an empty string for this paramter for no local MIDI ports bridging.
+* ```midiDevices``` is a comma separated list of input/output MIDI port index pairs (separated by a semi-colon ```:```) defining local MIDI devices. If a device only has either an input or output, leave the counterpart index blank. For example ```0:0``` defines a MIDI device with ```input port 0``` and ```output port 0```, ```1:``` defines a MIDI device with only ```input port 1``` and ```:2``` defines a MIDI device with only ```output port 2```. Finally, you can use an empty string for this parameter for no local MIDI ports bridging.
 
 **Tip:** To see a list of available MIDI ports and their indexes, run the program without arguments.
 
