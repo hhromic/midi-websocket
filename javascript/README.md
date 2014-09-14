@@ -37,4 +37,7 @@ midiWsClient.start();
 
 // Also you can send data
 midiWsClient.send(new Uint8Array([144, 0, 20]));
+
+// Or set a MIDI Id to be used by the server for MIDI routing
+midiWsClient.sendMidiId('myMidiApp1');
 ```
