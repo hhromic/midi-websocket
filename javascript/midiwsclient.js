@@ -1,5 +1,5 @@
 /**
- * MidiWsClient v1.0 - A very simple event-driven Midi WebSocket client for JavaScript.
+ * MidiWsClient v1.0 - A very simple event-driven MIDI WebSocket client for JavaScript.
  * Hugo Hromic - http://github.com/hhromic
  *
  * Dependency: JavaScript EventEmitter.
@@ -24,7 +24,7 @@
     // Prototype shortcut
     var proto = MidiWsClient.prototype;
 
-    // Start a WebSocket connection for Midi data
+    // Start a WebSocket connection for MIDI data
     proto.start = function () {
         if (typeof this._ws === 'undefined' || this._ws.readyState == WebSocket.CLOSED) {
             var midiWsClient = this;
@@ -52,10 +52,16 @@
             this._ws.close();
     }
 
-    // Send a Midi message to the WebSocket connection
+    // Send a MIDI message to the WebSocket connection
     proto.send = function (bytes) {
         if (typeof this._ws !== 'undefined' && this._ws.readyState == WebSocket.OPEN && bytes instanceof Uint8Array && bytes.length > 0)
             this._ws.send(bytes);
+    }
+
+    // Send a MIDI Id control message to the WebSocket connection
+    proto.sendMidiId = function (midiId) {
+        if (typeof this._ws !== 'undefined' && this._ws.readyState == WebSocket.OPEN && typeof midiId === 'string' && midiId.length > 0)
+            this._ws.send(JSON.stringify({type: 'SET_MIDI_ID', midiId: midiId}));
     }
 
     // Expose either via AMD, CommonJS or the global object
