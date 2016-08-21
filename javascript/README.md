@@ -1,18 +1,15 @@
-MIDI WebSocket for JavaScript
-=============================
+# MIDI WebSocket for JavaScript
 
-Requirements
-------------
+## Requirements
 
-The programs included depends on the very good [EventEmitter](http://github.com/Wolfy87/EventEmitter) library from Oliver Caldwell ([Wolfy87](http://github.com/Wolfy87)), make sure it is loaded before. For example:
+The programs included depends on the very good [EventEmitter][evemit] library from Oliver Caldwell. Make sure it is loaded before. For example:
 
-```html
-<script src="eventemitter.min.js"></script>
-<script src="midiwsclient.js"></script>
-```
+    <script src="eventemitter.min.js"></script>
+    <script src="midiwsclient.js"></script>
 
-MIDI WebSocket Client
----------------------
+[evemit]: https://github.com/Olical/EventEmitter
+
+## MIDI WebSocket Client
 
 A very simple event-driven Midi WebSocket client for JavaScript. Example usage:
 
@@ -35,7 +32,7 @@ midiWsClient.on('message', function(bytes) {
 });
 midiWsClient.start();
 
-// Also you can send data
+// You can send data some MIDI data
 midiWsClient.send(new Uint8Array([144, 0, 20]));
 
 // Or set a MIDI Id to be used by the server for MIDI routing

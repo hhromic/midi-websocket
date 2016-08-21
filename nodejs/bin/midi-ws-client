@@ -1,0 +1,111 @@
+#!/usr/bin/env node
+/* jshint node:true, esversion:6 */
+'use strict';
+
+/*!
+ * MIDI WebSocket Bridge Client.
+ * Hugo Hromic - http://github.com/hhromic
+ *
+ * Copyright 2016 Hugo Hromic
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// required modules
+const log4js = require('log4js');
+const argparse = require('argparse');
+const ws = require('ws');
+const midi = require('midi');
+const utils = require('../lib/utils.js');
+const _package = require('../package');
+
+// initialize loggers
+const loggers = {
+  midi: log4js.getLogger('midi:' + process.pid),
+  websocket: log4js.getLogger('websocket:' + process.pid),
+};
+
+// process command-line arguments
+const argParser = argparse.ArgumentParser({
+  version: _package.version,
+  description: _package.description,
+});
+argParser.addArgument(['-l', '--list-midi-devices'], {
+  type: Boolean, action: 'storeTrue', dest: 'listMidiDevices',
+  help: 'List available local MIDI devices and exit',
+});
+argParser.addArgument(['-u', '--ws-url'], {
+  type: String, defaultValue: 'ws://localhost:5000', metavar: 'URL', dest: 'wsUrl',
+  help: 'WebSocket server URL to connect (default: ws://localhost:5000)',
+});
+argParser.addArgument(['-d', '--midi-devices'], {
+  type: String, metavar: 'DEVICES', dest: 'midiDevices',
+  help: 'Local MIDI devices to bridge (default: none)',
+});
+const options = argParser.parseArgs();
+
+// list local MIDI devices and exit?
+if (options.listMidiDevices) {
+  utils.showPorts(new midi.input(), 'Current local MIDI input port indexes');
+  utils.showPorts(new midi.output(), 'Current local MIDI output port indexes');
+  process.exit(0);
+}
+
+// initialize WebSocket client
+const midiDevices = [];
+var wsClient = new ws(options.wsUrl);
+wsClient.on('error', err => {
+  loggers.websocket.error('client error: %s', err.toString());
+});
+wsClient.on('open', () => {
+  const midiDevicesIndexes = utils.parseMidiDevicesIndexes(options.midiDevices);
+  midiDevicesIndexes.forEach(indexes => {
+    const newMidiDevice = {input: undefined, output: undefined};
+    if (indexes.input !== undefined) {
+      const midiInput = new midi.input();
+      midiInput.ignoreTypes(true, true, true);
+      midiInput.on('message', (deltaTime, message) => {
+        midiDevices.forEach(midiDevice => {
+          if (midiDevice !== newMidiDevice && midiDevice.output !== undefined) {
+            midiDevice.output.sendMessage(message);
+          }
+        });
+        wsClient.send(Buffer.from(message));
+      });
+      midiInput.openPort(indexes.input);
+      newMidiDevice.input = midiInput;
+      loggers.midi.info('using local MIDI input: %s', midiInput.getPortName(indexes.input));
+    }
+    if (indexes.output !== undefined) {
+      const midiOutput = new midi.output();
+      midiOutput.openPort(indexes.output);
+      newMidiDevice.output = midiOutput;
+      loggers.midi.info('using local MIDI output: %s', midiOutput.getPortName(indexes.output));
+    }
+    midiDevices.push(newMidiDevice);
+  });
+  loggers.websocket.info('client connected to %s', options.wsUrl);
+});
+wsClient.on('close', () => {
+  loggers.websocket.debug('client disconnected');
+});
+wsClient.on('message', (data, flags) => {
+  if (flags.binary) {
+    const midiMessage = Array.from(data);
+    midiDevices.forEach(midiDevice => {
+      if (midiDevice.output !== undefined) {
+        midiDevice.output.sendMessage(midiMessage);
+      }
+    });
+  }
+});

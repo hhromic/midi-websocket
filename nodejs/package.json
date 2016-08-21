@@ -1,0 +1,39 @@
+{
+  "name": "midi-ws-bridge",
+  "version": "2.0.0",
+  "description": "MIDI WebSocket Bridging Client/Server for Node.js",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hhromic/midi-websocket/"
+  },
+  "keywords": [
+    "midi",
+    "websocket",
+    "bridge",
+    "client",
+    "server"
+  ],
+  "author": "Hugo Hromic",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/hhromic/midi-websocket/issues"
+  },
+  "homepage": "https://github.com/hhromic/midi-websocket",
+  "dependencies": {
+    "argparse": "^1.0.7",
+    "log4js": "^0.6.38",
+    "midi": "^0.9.5",
+    "ws": "^1.1.1"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^1.2.1"
+  },
+  "bin": {
+    "midi-ws-server": "bin/midi-ws-server",
+    "midi-ws-client": "bin/midi-ws-client"
+  }
+}
